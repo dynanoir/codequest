@@ -15,188 +15,153 @@
  * @returns {number} - Somme de a et b
  */
 function add(a, b) {
-  // TODO: Retourner la somme de a et b
+  return a + b;
 }
 
 /**
  * Vérifie si un nombre est pair
- * @param {number} n - Nombre à tester
- * @returns {boolean} - true si pair, false si impair
  */
 function isEven(n) {
-  // TODO: Retourner true si n est pair, false sinon
-  // Indice: utilisez l'opérateur modulo (%)
+  return n % 2 === 0;
 }
 
 /**
  * Calcule la somme de tous les éléments d'un tableau
- * @param {number[]} arr - Tableau de nombres
- * @returns {number} - Somme de tous les éléments
  */
 function sum(arr) {
-  // TODO: Retourner la somme de tous les éléments du tableau
-  // Indice: vous pouvez utiliser une boucle ou une méthode tableau
+  return arr.reduce((acc, val) => acc + val, 0);
 }
 
-/**
- * ==========================
- * SUPPLÉMENT: 20 Défis Pures
- * ==========================
- * Ajoutez des implémentations SANS effets de bord.
- * Groupés par difficulté: 5 simples, 5 faciles, 5 moyens, 5 complexes.
- * Conservez les fonctions pures: même entrée → même sortie, pas d'I/O.
- */
-
-// Simples (compléter pour atteindre 5 simples avec add/isEven/sum)
-/**
- * Retourne l'opposé arithmétique
- */
+// Simples
 function negate(n) {
-  // TODO: Retourner -n
+  return -n;
 }
 
-/**
- * Retourne le maximum de deux nombres
- */
 function maxOfTwo(a, b) {
-  // TODO: Retourner a si a >= b sinon b
+  return a >= b ? a : b;
 }
 
-// Faciles (5)
-/**
- * Contraint n dans l'intervalle [min, max]
- */
+// Faciles
 function clamp(n, min, max) {
-  // TODO: Retourner min si n < min, max si n > max, sinon n
+  return n < min ? min : n > max ? max : n;
 }
 
-/**
- * Moyenne arithmétique d'un tableau de nombres
- */
 function average(arr) {
-  // TODO: Utiliser sum(arr) / arr.length (gérer arr vide → NaN ou 0)
+  return arr.length === 0 ? 0 : sum(arr) / arr.length;
 }
 
-/**
- * Compte le nombre d'occurrences de value dans arr
- */
 function countOccurrences(arr, value) {
-  // TODO: Itérer et compter strictement === value
+  return arr.filter(v => v === value).length;
 }
 
-/**
- * Vérifie si une chaîne est un palindrome (insensible à la casse/espaces)
- */
 function isPalindrome(str) {
-  // TODO: Normaliser (lowercase, retirer espaces) puis comparer avec renversé
+  const s = str.replace(/\s+/g, '').toLowerCase();
+  return s === s.split('').reverse().join('');
 }
 
-/**
- * Somme des valeurs uniques d'un tableau de nombres
- */
 function sumUnique(arr) {
-  // TODO: Éliminer doublons puis sommer
+  return sum([...new Set(arr)]);
 }
 
-// Moyens (5)
-/**
- * Supprime les doublons en conservant l'ordre initial
- */
+// Moyens
 function unique(arr) {
-  // TODO: Retourner un nouveau tableau sans doublons
+  return [...new Set(arr)];
 }
 
-/**
- * Retourne un nouvel objet avec uniquement les clés listées
- */
 function pick(object, keys) {
-  // TODO: Construire un nouvel objet { k: object[k] } pour chaque k présent
+  return keys.reduce((acc, key) => {
+    if (key in object) acc[key] = object[key];
+    return acc;
+  }, {});
 }
 
-/**
- * Retourne un nouvel objet sans les clés listées
- */
 function omit(object, keys) {
-  // TODO: Construire un nouvel objet en excluant keys
+  return Object.keys(object).reduce((acc, key) => {
+    if (!keys.includes(key)) acc[key] = object[key];
+    return acc;
+  }, {});
 }
 
-/**
- * Compose deux fonctions f∘g: x → f(g(x))
- */
 function compose2(f, g) {
-  // TODO: Retourner une fonction (x) => f(g(x))
+  return x => f(g(x));
 }
 
-/**
- * Normalise une chaîne en kebab-case (lettres minuscules, mots séparés par '-')
- */
 function toKebabCase(str) {
-  // TODO: Remplacer espaces/underscores par '-', baisser la casse, compacter multiples '-'
+  return str
+    .replace(/[_\s]+/g, '-')
+    .replace(/-+/g, '-')
+    .toLowerCase();
 }
 
-// Complexes (5)
-/**
- * Tri rapide (quicksort) pur: retourne un nouveau tableau trié (ascendant)
- */
+// Complexes
 function quickSort(arr) {
-  // TODO: Implémenter quicksort sans muter arr
+  if (arr.length <= 1) return [...arr];
+  const [pivot, ...rest] = arr;
+  return [
+    ...quickSort(rest.filter(x => x < pivot)),
+    pivot,
+    ...quickSort(rest.filter(x => x >= pivot))
+  ];
 }
 
-/**
- * Mémoïse une fonction unaire (clé = argument JSON.stringify)
- */
 function memoizeUnary(fn) {
-  // TODO: Retourner une fonction avec cache interne basé sur l'argument
+  const cache = {};
+  return arg => {
+    const key = JSON.stringify(arg);
+    if (!(key in cache)) cache[key] = fn(arg);
+    return cache[key];
+  };
 }
 
-/**
- * Test d'égalité profonde (objets/arrays primitifs)
- */
 function deepEqual(a, b) {
-  // TODO: Comparer récursivement types, longueurs, clés et valeurs
+  if (a === b) return true;
+  if (typeof a !== typeof b) return false;
+  if (a && b && typeof a === 'object') {
+    if (Array.isArray(a) !== Array.isArray(b)) return false;
+    if (Array.isArray(a)) {
+      if (a.length !== b.length) return false;
+      return a.every((v, i) => deepEqual(v, b[i]));
+    } else {
+      const keysA = Object.keys(a);
+      const keysB = Object.keys(b);
+      if (keysA.length !== keysB.length) return false;
+      return keysA.every(k => deepEqual(a[k], b[k]));
+    }
+  }
+  return false;
 }
 
-/**
- * Pipe de gauche à droite: pipe(f,g,h)(x) = h(g(f(x)))
- */
 function pipe(...fns) {
-  // TODO: Retourner une fonction qui applique successivement toutes les fns
+  return x => fns.reduce((v, f) => f(v), x);
 }
 
-/**
- * Découpe un tableau en morceaux de taille size
- */
 function chunk(arr, size) {
-  // TODO: Retourner un nouveau tableau de sous-tableaux (dernière tranche courte possible)
+  const res = [];
+  for (let i = 0; i < arr.length; i += size) {
+    res.push(arr.slice(i, i + size));
+  }
+  return res;
 }
 
-// Export pour les tests
 module.exports = {
-  // existants
   add,
   isEven,
   sum,
-  // simples
   negate,
   maxOfTwo,
-  // faciles
   clamp,
   average,
   countOccurrences,
   isPalindrome,
   sumUnique,
-  // moyens
   unique,
   pick,
   omit,
   compose2,
   toKebabCase,
-  // complexes
   quickSort,
   memoizeUnary,
   deepEqual,
   pipe,
   chunk
 };
-
-
