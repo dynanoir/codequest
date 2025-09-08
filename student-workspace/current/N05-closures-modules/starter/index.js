@@ -6,109 +6,275 @@
  * Compteur via fermeture
  */
 function createCounter(start = 0) {
-  // TODO: Retourner { next:()=>++count, value:()=>count }
+  let count = start;
+  return {
+    next: () => ++count,
+    value: () => count,
+  };
 }
 
 /**
  * Fabrique de logger silencieux (pas d'I/O): accumulate messages
  */
 function createLogger() {
-  // TODO: Retourner { log:(m)=>..., get:()=>[...], clear:()=>... }
+  let messages = [];
+  return {
+    log: m => {
+      messages = [...messages, m];
+    },
+    get: () => [...messages],
+    clear: () => {
+      messages = [];
+    },
+  };
 }
 
 /**
  * Module de cache en fermeture
  */
 function createCache() {
-  // TODO: get/set/has/size avec encapsulation
+  let store = {};
+  return {
+    get: key => store[key],
+    set: (key, value) => {
+      store = { ...store, [key]: value };
+    },
+    has: key => key in store,
+    size: () => Object.keys(store).length,
+  };
 }
-
-/**
- * Supplément: 20 défis (Closures / Modules)
- */
 
 // Simples
 function makeAdder(x) {
-  // TODO: Retourner (y)=>x+y
+  return y => x + y;
 }
 
 function once(fn) {
-  // TODO: Exécuter fn une seule fois, ensuite retourner dernier résultat
+  let called = false;
+  let result;
+  return (...args) => {
+    if (!called) {
+      called = true;
+      result = fn(...args);
+    }
+    return result;
+  };
 }
 
 function throttle(fn, wait) {
-  // TODO: Version pure simulée: respecter fenêtre via timestamps en argument
+  let lastTime = 0;
+  let lastResult;
+  return (time, ...args) => {
+    if (time - lastTime >= wait) {
+      lastTime = time;
+      lastResult = fn(...args);
+    }
+    return lastResult;
+  };
 }
 
 function memoize(fn) {
-  // TODO: Cache basé sur JSON.stringify des arguments
+  const cache = {};
+  return (...args) => {
+    const key = JSON.stringify(args);
+    if (!(key in cache)) {
+      cache[key] = fn(...args);
+    }
+    return cache[key];
+  };
 }
 
 function withDefaults(fn, defaults) {
-  // TODO: Retourner wrapper qui applique défauts via closure
+  return (args = {}) => fn({ ...defaults, ...args });
 }
 
 // Faciles
 function createIdGenerator(prefix = 'id') {
-  // TODO: Retourner ()=>`${prefix}-${n++}`
+  let n = 0;
+  return () => `${prefix}-${n++}`;
 }
 
 function tap(value, fn) {
-  // TODO: Appeler fn(value) et retourner value (style pipeline)
+  fn(value);
+  return value;
 }
 
 function ns(namespace) {
-  // TODO: Module simple: ns('app').set('k','v').get('k')
+  const store = {};
+  return {
+    set: (k, v) => {
+      store[`${namespace}.${k}`] = v;
+      return this;
+    },
+    get: k => store[`${namespace}.${k}`],
+  };
 }
 
 function counterModule(start = 0) {
-  // TODO: { inc, dec, value }
+  let count = start;
+  return {
+    inc: () => ++count,
+    dec: () => --count,
+    value: () => count,
+  };
 }
 
 function composeMiddleware(...middlewares) {
-  // TODO: Retourner (ctx)=>middlewares chainés (inspiré Koa) (pure)
+  return ctx =>
+    middlewares.reduceRight((next, mw) => () => mw(ctx, next), () => {})(ctx);
 }
 
 // Moyens
 function eventBus() {
-  // TODO: on/off/emit (callbacks stockés en closure, sans I/O)
+  const handlers = {};
+  return {
+    on: (event, cb) => {
+      handlers[event] = [...(handlers[event] || []), cb];
+    },
+    off: (event, cb) => {
+      handlers[event] = (handlers[event] || []).filter(fn => fn !== cb);
+    },
+    emit: (event, data) => {
+      (handlers[event] || []).forEach(fn => fn(data));
+    },
+  };
 }
 
 function scheduler() {
-  // TODO: planifier tâches par tick virtuel (appel explicite tick())
+  let tasks = [];
+  return {
+    add: task => {
+      tasks = [...tasks, task];
+    },
+    tick: () => {
+      const [head, ...rest] = tasks;
+      tasks = rest;
+      return head ? head() : undefined;
+    },
+  };
 }
 
 function retry(fn, maxRetries = 3) {
-  // TODO: Retourner wrapper qui tente jusqu'à maxRetries (synchrone)
+  return (...args) => {
+    let attempts = 0;
+    while (attempts < maxRetries) {
+      try {
+        return fn(...args);
+      } catch (e) {
+        attempts++;
+        if (attempts >= maxRetries) throw e;
+      }
+    }
+  };
 }
 
 function circuitBreaker(fn, failureThreshold = 3) {
-  // TODO: HALF_OPEN/Open/Closed états simulés en closure
+  let failures = 0;
+  let state = 'CLOSED';
+  return (...args) => {
+    if (state === 'OPEN') throw new Error('Circuit open');
+    try {
+      const result = fn(...args);
+      failures = 0;
+      state = 'CLOSED';
+      return result;
+    } catch (e) {
+      failures++;
+      if (failures >= failureThreshold) state = 'OPEN';
+      throw e;
+    }
+  };
 }
 
 function createStore(initialState) {
-  // TODO: Store minimal (getState, dispatch, subscribe) sans effets
+  let state = initialState;
+  let listeners = [];
+  return {
+    getState: () => state,
+    dispatch: action => {
+      state = action(state);
+      listeners.forEach(l => l());
+    },
+    subscribe: fn => {
+      listeners = [...listeners, fn];
+      return () => {
+        listeners = listeners.filter(f => f !== fn);
+      };
+    },
+  };
 }
 
 // Complexes
 function iocContainer() {
-  // TODO: register(name, factory), resolve(name) avec cache singleton
+  const registry = {};
+  const cache = {};
+  return {
+    register: (name, factory) => {
+      registry[name] = factory;
+    },
+    resolve: name => {
+      if (cache[name]) return cache[name];
+      if (!registry[name]) throw new Error(`Not registered: ${name}`);
+      cache[name] = registry[name]();
+      return cache[name];
+    },
+  };
 }
 
 function moduleLoader(modules) {
-  // TODO: Résolution de dépendances DAG, retour objets initialisés
+  const resolved = {};
+  function resolve(name) {
+    if (resolved[name]) return resolved[name];
+    if (!modules[name]) throw new Error(`Module not found: ${name}`);
+    const { deps = [], factory } = modules[name];
+    const depInstances = deps.map(resolve);
+    resolved[name] = factory(...depInstances);
+    return resolved[name];
+  }
+  return { resolve };
 }
 
 function taskQueue(concurrency = 2) {
-  // TODO: file d'attente virtuelle: add(task), tick() pour exécuter jusqu'à concurrency
+  let queue = [];
+  return {
+    add: task => {
+      queue = [...queue, task];
+    },
+    tick: () => {
+      const tasks = queue.slice(0, concurrency);
+      queue = queue.slice(concurrency);
+      return tasks.map(fn => fn());
+    },
+  };
 }
 
 function lruCache(maxSize = 3) {
-  // TODO: get/set avec éviction LRU (pure, structure mise à jour retournée)
+  let store = new Map();
+  return {
+    get: key => {
+      if (!store.has(key)) return undefined;
+      const value = store.get(key);
+      store.delete(key);
+      store.set(key, value);
+      return value;
+    },
+    set: (key, value) => {
+      if (store.has(key)) store.delete(key);
+      store.set(key, value);
+      if (store.size > maxSize) {
+        const firstKey = store.keys().next().value;
+        store.delete(firstKey);
+      }
+    },
+    size: () => store.size,
+  };
 }
 
 function sandbox(env = {}) {
-  // TODO: évaluer expressions limitées via fonctions whitelisted passées en env (pure)
+  return expr => {
+    const fn = new Function(...Object.keys(env), `return ${expr}`);
+    return fn(...Object.values(env));
+  };
 }
 
 module.exports = {
@@ -134,7 +300,5 @@ module.exports = {
   moduleLoader,
   taskQueue,
   lruCache,
-  sandbox
+  sandbox,
 };
-
-
