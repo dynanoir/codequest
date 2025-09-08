@@ -1,6 +1,6 @@
 {
   "currentAct": 1,
-  "currentScene": "N03-map-filter",
+  "currentScene": "N04-reduce-immutability",
   "completedScenes": [
     "N00-intro",
     "N01-functions"
@@ -71,10 +71,16 @@
       "status": "base",
       "timeSpent": 2,
       "lastValidation": "2025-09-08T14:04:25.524Z"
+    },
+    "N04-reduce-immutability": {
+      "startTime": "2025-09-08T14:08:25.782Z",
+      "attempts": 0,
+      "status": "started",
+      "timeSpent": 0
     }
   },
   "hintsUsed": {},
   "totalScore": 0,
   "studentId": "student",
-  "lastUpdated": "2025-09-08T14:04:25.524Z"
+  "lastUpdated": "2025-09-08T14:09:48.948Z"
 }

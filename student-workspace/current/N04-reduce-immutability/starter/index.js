@@ -6,116 +6,171 @@
  * Somme via reduce
  */
 function sum(numbers) {
-  // TODO: numbers.reduce((acc,n)=>acc+n, 0)
+  return numbers.reduce((acc, n) => acc + n, 0);
 }
 
 /**
  * Produit via reduce
  */
 function product(numbers) {
-  // TODO: numbers.reduce((acc,n)=>acc*n, 1)
+  return numbers.reduce((acc, n) => acc * n, 1);
 }
 
 /**
  * Compte occurrences d'éléments (immutabilité)
  */
 function frequencyMap(values) {
-  // TODO: Construire { valeur: compteur } sans muter l'accumulateur original
+  return values.reduce((acc, v) => {
+    return { ...acc, [v]: (acc[v] || 0) + 1 };
+  }, {});
 }
 
 /**
  * Concatène chaînes avec séparateur via reduce
  */
 function joinWith(values, sep = ',') {
-  // TODO: Implémenter join via reduce
+  return values.reduce((acc, v, i) => (i === 0 ? v : acc + sep + v), '');
 }
-
-/**
- * Supplément: 20 défis (Reduce / Immutabilité)
- */
 
 // Simples
 function minValue(numbers) {
-  // TODO: Accumuler le minimum
+  return numbers.reduce((min, n) => (n < min ? n : min), Infinity);
 }
 
 function maxValue(numbers) {
-  // TODO: Accumuler le maximum
+  return numbers.reduce((max, n) => (n > max ? n : max), -Infinity);
 }
 
 function countTruthy(values) {
-  // TODO: Compter valeurs truthy
+  return values.reduce((count, v) => count + (v ? 1 : 0), 0);
 }
 
 function flattenOnce(arrays) {
-  // TODO: [[1],[2,3]] → [1,2,3]
+  return arrays.reduce((acc, arr) => [...acc, ...arr], []);
 }
 
 function sumBy(list, key) {
-  // TODO: Somme des list[i][key]
+  return list.reduce((acc, obj) => acc + (obj[key] || 0), 0);
 }
 
 // Faciles
 function groupBy(list, key) {
-  // TODO: { [value]: [items] }
+  return list.reduce((acc, item) => {
+    const k = item[key];
+    return { ...acc, [k]: [...(acc[k] || []), item] };
+  }, {});
 }
 
 function unique(numbers) {
-  // TODO: Retourner uniques (Set ou reduce pur)
+  return numbers.reduce((acc, n) => {
+    return acc.includes(n) ? acc : [...acc, n];
+  }, []);
 }
 
 function mapWithReduce(list, fn) {
-  // TODO: Reproduire map via reduce (immutabilité)
+  return list.reduce((acc, item) => [...acc, fn(item)], []);
 }
 
 function filterWithReduce(list, predicate) {
-  // TODO: Reproduire filter via reduce
+  return list.reduce(
+    (acc, item) => (predicate(item) ? [...acc, item] : acc),
+    []
+  );
 }
 
 function partition(list, predicate) {
-  // TODO: Retourner { pass:[], fail:[] }
+  return list.reduce(
+    (acc, item) =>
+      predicate(item)
+        ? { ...acc, pass: [...acc.pass, item] }
+        : { ...acc, fail: [...acc.fail, item] },
+    { pass: [], fail: [] }
+  );
 }
 
 // Moyens
 function compose(...fns) {
-  // TODO: Réaliser composition via reduceRight
+  return x => fns.reduceRight((acc, fn) => fn(acc), x);
 }
 
 function pipe(...fns) {
-  // TODO: Réaliser pipe via reduce
+  return x => fns.reduce((acc, fn) => fn(acc), x);
 }
 
 function dedupeStable(list) {
-  // TODO: Supprimer doublons en gardant premier index
+  return list.reduce(
+    (acc, item) => (acc.includes(item) ? acc : [...acc, item]),
+    []
+  );
 }
 
 function runningSum(numbers) {
-  // TODO: Retourner cumul progressif: [a,b,c] → [a,a+b,a+b+c]
+  return numbers.reduce(
+    (acc, n) => [...acc, (acc.length ? acc[acc.length - 1] : 0) + n],
+    []
+  );
 }
 
 function histogram(strings) {
-  // TODO: { len:count } sur longueur des strings
+  return strings.reduce((acc, s) => {
+    const len = s.length;
+    return { ...acc, [len]: (acc[len] || 0) + 1 };
+  }, {});
 }
 
 // Complexes
 function deepFreezeClone(object) {
-  // TODO: Retourner une version profondément figée (immuable) sans muter original
+  if (object && typeof object === 'object') {
+    const clone = Array.isArray(object)
+      ? object.map(deepFreezeClone)
+      : Object.fromEntries(
+          Object.entries(object).map(([k, v]) => [k, deepFreezeClone(v)])
+        );
+    return Object.freeze(clone);
+  }
+  return object;
 }
 
 function deepMerge(objects) {
-  // TODO: Fusionner une liste d'objets récursivement via reduce
+  return objects.reduce((acc, obj) => {
+    return Object.entries(obj).reduce((acc2, [k, v]) => {
+      if (
+        v &&
+        typeof v === 'object' &&
+        !Array.isArray(v) &&
+        acc2[k] &&
+        typeof acc2[k] === 'object'
+      ) {
+        return { ...acc2, [k]: deepMerge([acc2[k], v]) };
+      }
+      return { ...acc2, [k]: v };
+    }, acc);
+  }, {});
 }
 
 function diffArrays(a, b) {
-  // TODO: Retourner { added, removed, kept }
+  return {
+    added: b.filter(x => !a.includes(x)),
+    removed: a.filter(x => !b.includes(x)),
+    kept: a.filter(x => b.includes(x)),
+  };
 }
 
 function toCSV(rows) {
-  // TODO: Construire CSV depuis [{...}] via reduce
+  if (rows.length === 0) return '';
+  const headers = Object.keys(rows[0]);
+  const lines = rows.reduce(
+    (acc, row) => [
+      ...acc,
+      headers.map(h => JSON.stringify(row[h] ?? '')).join(','),
+    ],
+    [headers.join(',')]
+  );
+  return lines.join('\n');
 }
 
 function indexBy(list, key) {
-  // TODO: { [item[key]]: item }
+  return list.reduce((acc, item) => ({ ...acc, [item[key]]: item }), {});
 }
 
 module.exports = {
@@ -142,7 +197,5 @@ module.exports = {
   deepMerge,
   diffArrays,
   toCSV,
-  indexBy
+  indexBy,
 };
-
-
