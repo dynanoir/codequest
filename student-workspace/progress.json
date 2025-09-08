@@ -1,6 +1,6 @@
 {
   "currentAct": 1,
-  "currentScene": "N00-warmup",
+  "currentScene": "N00-warmup-tutorial",
   "completedScenes": [
     "N00-intro",
     "N01-functions"
@@ -53,9 +53,10 @@
     },
     "N00-warmup-tutorial": {
       "startTime": "2025-09-08T05:47:39.034Z",
-      "attempts": 0,
-      "status": "started",
-      "timeSpent": 0
+      "attempts": 1,
+      "status": "base",
+      "timeSpent": 482,
+      "lastValidation": "2025-09-08T13:49:19.885Z"
     },
     "N02-destructuring": {
       "startTime": "2025-09-08T05:47:48.847Z",
@@ -67,5 +68,5 @@
   "hintsUsed": {},
   "totalScore": 0,
   "studentId": "student",
-  "lastUpdated": "2025-09-08T13:43:17.597Z"
+  "lastUpdated": "2025-09-08T13:49:19.885Z"
 }

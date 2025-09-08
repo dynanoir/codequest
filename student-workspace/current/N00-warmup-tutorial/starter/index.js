@@ -1,109 +1,158 @@
 /**
  * CodeQuest 2.3 - N00 Warmup Tutorial
- * 
- * Mission: Implémenter la fonction ping() qui préfixe un message avec "pong: "
- * 
- * Exemples:
- *   ping("hello") → "pong: hello"
- *   ping("world") → "pong: world"
- *   ping("")      → "pong: "
  */
+
+// ==============================
+// N00 Warmup - Strings
+// ==============================
 
 function ping(message) {
-  // TODO: Retourner le message préfixé par "pong: "
-  // Indice: Utiliser la concaténation de strings ou template literals
+  return `pong: ${message}`;
 }
-
-/**
- * Supplément: 20 mini-défis (strings)
- * 5 simples, 5 faciles, 5 moyens, 5 complexes
- */
 
 // Simples
 function echoUpper(s) {
-  // TODO: Retourner s en majuscules
+  return s.toUpperCase();
 }
 
 function trimAndPing(s) {
-  // TODO: `pong: ${s.trim()}`
+  return `pong: ${s.trim()}`;
 }
 
 function prefix(s, p = '>> ') {
-  // TODO: Préfixer s par p
+  return `${p}${s}`;
 }
 
 function suffix(s, suf = ' <<') {
-  // TODO: Suffixer s par suf
+  return `${s}${suf}`;
 }
 
 function surround(s, left = '[', right = ']') {
-  // TODO: Entourer s avec left/right
+  return `${left}${s}${right}`;
 }
 
 // Faciles
 function countWords(s) {
-  // TODO: Compter mots séparés par espaces multiples
+  return s.trim().split(/\s+/).filter(Boolean).length;
 }
 
 function maskEmail(email) {
-  // TODO: 'john.doe@example.com' → 'j***@example.com'
+  const [user, domain] = email.split('@');
+  return `${user[0]}***@${domain}`;
 }
 
 function kebab(str) {
-  // TODO: Kebab-case
+  return str.trim().replace(/[\s_]+/g, '-').toLowerCase();
 }
 
 function snake(str) {
-  // TODO: Snake_case
+  return str.trim().replace(/[\s-]+/g, '_').toLowerCase();
 }
 
 function capitalizeWords(str) {
-  // TODO: Capitaliser chaque mot
+  return str.replace(/\b\w/g, c => c.toUpperCase());
 }
 
 // Moyens
 function wrapAt(s, width) {
-  // TODO: Couper en lignes <= width sans casser mots si possible
+  const words = s.split(' ');
+  const lines = [];
+  let current = '';
+  for (const word of words) {
+    if ((current + ' ' + word).trim().length > width) {
+      lines.push(current.trim());
+      current = word;
+    } else {
+      current += ' ' + word;
+    }
+  }
+  if (current) lines.push(current.trim());
+  return lines;
 }
 
 function parseQuery(query) {
-  // TODO: '?a=1&b=2' → { a:'1', b:'2' }
+  return Object.fromEntries(
+    query.replace(/^\?/, '').split('&').map(pair => pair.split('='))
+  );
 }
 
 function serializeQuery(obj) {
-  // TODO: { a:1, b:'x y' } → '?a=1&b=x%20y'
+  return (
+    '?' +
+    Object.entries(obj)
+      .map(([k, v]) => `${k}=${encodeURIComponent(v)}`)
+      .join('&')
+  );
 }
 
 function stripAnsi(s) {
-  // TODO: Retirer séquences ANSI
+  return s.replace(/\x1b\[[0-9;]*m/g, '');
 }
 
 function isAnagram(a, b) {
-  // TODO: Tester anagrammes (ignorer espaces/casse)
+  const normalize = str => str.replace(/\s+/g, '').toLowerCase().split('').sort().join('');
+  return normalize(a) === normalize(b);
 }
 
 // Complexes
 function wrapMarkdownCodeBlocks(md) {
-  // TODO: Détecter ```blocs``` et les entourer de balises <pre><code>
+  return md.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
 }
 
 function highlightKeyword(s, kw) {
-  // TODO: Retourner string avec [kw] entouré de ** (markdown)
+  const re = new RegExp(`(${kw})`, 'gi');
+  return s.replace(re, '**$1**');
 }
 
 function justifyText(s, width) {
-  // TODO: Justifier lignes à width (espaces redistribués)
+  const lines = s.split('\n').map(line => line.trim());
+  const justified = lines.map(line => {
+    const words = line.split(/\s+/);
+    if (words.length === 1) return words[0];
+    let spaces = width - words.join('').length;
+    const gaps = words.length - 1;
+    const spacesPerGap = Math.floor(spaces / gaps);
+    const extra = spaces % gaps;
+    return words.map((w, i) => {
+      if (i === words.length - 1) return w;
+      return w + ' '.repeat(spacesPerGap + (i < extra ? 1 : 0));
+    }).join('');
+  });
+  return justified.join('\n');
 }
 
 function diffStrings(a, b) {
-  // TODO: Retourner liste minimale d'opérations (insert/delete/keep)
+  // simple diff: return array of operations ['keep', 'insert', 'delete']
+  const ops = [];
+  const la = a.split('');
+  const lb = b.split('');
+  let i = 0, j = 0;
+  while (i < la.length || j < lb.length) {
+    if (la[i] === lb[j]) {
+      ops.push({ op: 'keep', char: la[i] });
+      i++; j++;
+    } else if (lb[j] && !la.includes(lb[j])) {
+      ops.push({ op: 'insert', char: lb[j] });
+      j++;
+    } else if (la[i]) {
+      ops.push({ op: 'delete', char: la[i] });
+      i++;
+    } else {
+      j++;
+    }
+  }
+  return ops;
 }
 
 function slugifyWithStopwords(s, stopwords = ['the','a','of']) {
-  // TODO: Slugifier en supprimant stopwords
+  return s
+    .toLowerCase()
+    .split(/\W+/)
+    .filter(word => word && !stopwords.includes(word))
+    .join('-');
 }
 
-// Export pour les tests
+// Export
 module.exports = {
   ping,
   echoUpper,
@@ -127,5 +176,3 @@ module.exports = {
   diffStrings,
   slugifyWithStopwords
 };
-
-
