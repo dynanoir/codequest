@@ -1,6 +1,6 @@
 {
   "currentAct": 1,
-  "currentScene": "N02-destructuring",
+  "currentScene": "N03-map-filter",
   "completedScenes": [
     "N00-intro",
     "N01-functions"
@@ -64,10 +64,17 @@
       "status": "base",
       "timeSpent": 493,
       "lastValidation": "2025-09-08T14:01:18.384Z"
+    },
+    "N03-map-filter": {
+      "startTime": "2025-09-08T14:02:47.234Z",
+      "attempts": 1,
+      "status": "base",
+      "timeSpent": 2,
+      "lastValidation": "2025-09-08T14:04:25.524Z"
     }
   },
   "hintsUsed": {},
   "totalScore": 0,
   "studentId": "student",
-  "lastUpdated": "2025-09-08T14:01:18.384Z"
+  "lastUpdated": "2025-09-08T14:04:25.524Z"
 }

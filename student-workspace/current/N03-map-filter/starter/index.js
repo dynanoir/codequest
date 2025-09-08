@@ -5,110 +5,132 @@
 /**
  * Double tous les nombres d'un tableau
  */
+/**
+ * CodeQuest 2.3 - N03 Map/Filter Pipeline
+ */
+
+/**
+ * Double tous les nombres d'un tableau
+ */
 function doubleNumbers(numbers) {
-  // TODO: Utiliser .map() pour doubler
+  return numbers.map(n => n * 2);
 }
 
 /**
  * Filtre les nombres pairs
  */
 function filterEven(numbers) {
-  // TODO: Utiliser .filter() avec isEven
+  return numbers.filter(n => n % 2 === 0);
 }
 
 /**
  * Pipeline: garde les pairs et les double
  */
 function evenDoubled(numbers) {
-  // TODO: Chaîner .filter().map()
+  return numbers.filter(n => n % 2 === 0).map(n => n * 2);
 }
-
-/**
- * Supplément: 20 défis (map/filter pipelines)
- */
 
 // Simples
 function squareNumbers(numbers) {
-  // TODO: numbers.map(n => n*n)
+  return numbers.map(n => n * n);
 }
 
 function incrementAll(numbers) {
-  // TODO: numbers.map(n => n+1)
+  return numbers.map(n => n + 1);
 }
 
 function onlyPositive(numbers) {
-  // TODO: numbers.filter(n => n > 0)
+  return numbers.filter(n => n > 0);
 }
 
 function onlyStrings(values) {
-  // TODO: values.filter(v => typeof v === 'string')
+  return values.filter(v => typeof v === 'string');
 }
 
 function lengths(strings) {
-  // TODO: strings.map(s => s.length)
+  return strings.map(s => s.length);
 }
 
 // Faciles
 function squareOdds(numbers) {
-  // TODO: numbers.filter(n=>n%2!==0).map(n=>n*n)
+  return numbers.filter(n => n % 2 !== 0).map(n => n * n);
 }
 
 function compact(values) {
-  // TODO: Retirer valeurs falsy: v => Boolean(v)
+  return values.filter(Boolean);
 }
 
 function pluck(list, key) {
-  // TODO: list.map(o => o[key])
+  return list.map(o => o[key]);
 }
 
 function filterByKey(list, key) {
-  // TODO: list.filter(o => key in o)
+  return list.filter(o => key in o);
 }
 
 function tagEvenOdd(numbers) {
-  // TODO: numbers.map(n => ({ n, type: n%2===0?'even':'odd' }))
+  return numbers.map(n => ({ n, type: n % 2 === 0 ? 'even' : 'odd' }));
 }
 
 // Moyens
 function normalizeEmails(users) {
-  // TODO: users.map(u=>({...u, email:u.email.toLowerCase().trim()}))
+  return users.map(u => ({ ...u, email: u.email.toLowerCase().trim() }));
 }
 
 function uniqueById(list) {
-  // TODO: Filtrer doublons par id en conservant le premier
+  const seen = new Set();
+  return list.filter(u => {
+    if (seen.has(u.id)) return false;
+    seen.add(u.id);
+    return true;
+  });
 }
 
 function topNByScore(list, n) {
-  // TODO: Trier copie par score desc puis prendre n premiers (utiliser map/filter uniquement si possible)
+  return [...list]
+    .sort((a, b) => b.score - a.score)
+    .slice(0, n);
 }
 
 function pipelineNormalize(numbers) {
-  // TODO: Retirer NaN/undefined, convertir strings → number, puis doubler
+  return numbers
+    .filter(v => v !== undefined && !Number.isNaN(Number(v)))
+    .map(v => Number(v) * 2);
 }
 
 function annotateRank(list) {
-  // TODO: Mappper vers { ...item, rank: index+1 } après pré-tri par score desc
+  return [...list]
+    .sort((a, b) => b.score - a.score)
+    .map((item, i) => ({ ...item, rank: i + 1 }));
 }
 
 // Complexes
 function wordFrequencies(words) {
-  // TODO: Compter fréquences via map/filter (sans reduce) en combinant structures
+  const freq = {};
+  words.forEach(w => {
+    const key = w.toLowerCase();
+    freq[key] = (freq[key] || 0) + 1;
+  });
+  return freq;
 }
 
 function windowedMax(numbers, k) {
-  // TODO: Pour chaque i, max de numbers[i..i+k-1] (ébauche avec map)
+  return numbers.map((_, i) => {
+    if (i + k > numbers.length) return undefined;
+    return Math.max(...numbers.slice(i, i + k));
+  }).filter(v => v !== undefined);
 }
 
 function zipMap(a, b) {
-  // TODO: Associer éléments par index → [{ a:a0, b:b0 }, ...]
+  return a.map((val, i) => ({ a: val, b: b[i] }));
 }
 
 function difference(a, b) {
-  // TODO: Eléments de a non présents dans b
+  return a.filter(x => !b.includes(x));
 }
 
 function intersection(a, b) {
-  // TODO: Eléments communs entre a et b
+  return a.filter(x => b.includes(x));
 }
 
 module.exports = {
@@ -136,5 +158,3 @@ module.exports = {
   difference,
   intersection
 };
-
-
