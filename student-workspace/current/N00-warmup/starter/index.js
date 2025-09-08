@@ -5,104 +5,116 @@
 
 /**
  * Returns environment information
- * @returns {Object} Environment details with node version, platform, and ready status
  */
 function getEnvironment() {
-  // TODO: Return an object with:
-  // - node: process.version (Node.js version)
-  // - platform: process.platform (OS platform)
-  // - ready: true if node version >= 16
+  const version = process.version.replace(/^v/, "");
+  const major = parseInt(version.split(".")[0], 10);
   return {
     node: process.version,
     platform: process.platform,
-    ready: true
+    ready: major >= 16
   };
-  // Your code here
 }
 
 /**
  * Creates a welcome message
- * @param {string} name - The name to welcome
- * @returns {string} Welcome message
  */
 function warmUp(name = 'Adventurer') {
-  // TODO: Return "Welcome [name] to CodeQuest!"
   return `Welcome ${name} to CodeQuest!`;
-  // Your code here
 }
 
-/**
- * ==============================
- * Extra: 20 Warm-up mini-défis
- * ==============================
- * 5 simples, 5 faciles, 5 moyens, 5 complexes.
- */
+// ==============================
+// Extra: 20 Warm-up mini-défis
+// ==============================
 
 // Simples
 function greetUpper(name) {
-  // TODO: Retourner un message en UPPERCASE: `HELLO, ${name}!`
+  return `HELLO, ${name}!`;
 }
 
 function reverseString(s) {
-  // TODO: Retourner la chaîne inversée
+  return s.split("").reverse().join("");
 }
 
 function repeatString(s, n) {
-  // TODO: Répéter s n fois (n>=0) sans effets de bord
+  return s.repeat(n);
 }
 
 function parseSemver(version) {
-  // TODO: Retourner { major, minor, patch } depuis 'v16.14.2' ou '16.14.2'
+  const [major, minor, patch] = version.replace(/^v/, "").split(".").map(Number);
+  return { major, minor, patch };
 }
 
 function isNodeGte(required) {
-  // TODO: Retourner true si process.version >= required (ex: '16.0.0') sans effets de bord
+  const [curMaj, curMin, curPatch] = process.version.replace(/^v/, "").split(".").map(Number);
+  const [reqMaj, reqMin, reqPatch] = required.replace(/^v/, "").split(".").map(Number);
+  if (curMaj !== reqMaj) return curMaj > reqMaj;
+  if (curMin !== reqMin) return curMin > reqMin;
+  return curPatch >= reqPatch;
 }
 
 // Faciles
 function sumRange(n) {
-  // TODO: Somme 1..n (n>=1)
+  return (n * (n + 1)) / 2;
 }
 
 function factorial(n) {
-  // TODO: Factorielle de n (0! = 1)
+  return n <= 1 ? 1 : n * factorial(n - 1);
 }
 
 function isPrime(n) {
-  // TODO: Tester primalité (n entier >= 0)
+  if (n < 2) return false;
+  for (let i = 2; i * i <= n; i++) {
+    if (n % i === 0) return false;
+  }
+  return true;
 }
 
 function toKebab(str) {
-  // TODO: Convertir 'Hello World_test' → 'hello-world-test'
+  return str.trim().replace(/[\s_]+/g, "-").toLowerCase();
 }
 
 function formatBytes(bytes) {
-  // TODO: Retourner une chaîne formatée (ex: 1024 → '1 KB') sans I/O
+  if (bytes < 1024) return `${bytes} B`;
+  const units = ["B", "KB", "MB", "GB", "TB"];
+  let i = 0;
+  let val = bytes;
+  while (val >= 1024 && i < units.length - 1) {
+    val /= 1024;
+    i++;
+  }
+  return `${Math.round(val)} ${units[i]}`;
 }
 
 // Moyens
 function range(start, end, step = 1) {
-  // TODO: Retourner un tableau [start, start+step, ..., <= end]
+  const arr = [];
+  for (let i = start; i <= end; i += step) arr.push(i);
+  return arr;
 }
 
 function uniqueSorted(arr) {
-  // TODO: Retourner valeurs uniques triées (asc)
+  return [...new Set(arr)].sort((a, b) => a - b);
 }
 
 function chunkArray(arr, size) {
-  // TODO: Retourner un tableau de sous-tableaux de taille size
+  const result = [];
+  for (let i = 0; i < arr.length; i += size) result.push(arr.slice(i, i + size));
+  return result;
 }
 
 function median(arr) {
-  // TODO: Retourner la médiane (tableau non vide)
+  const sorted = [...arr].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 === 0
+    ? (sorted[mid - 1] + sorted[mid]) / 2
+    : sorted[mid];
 }
 
-
-// Don't forget to export your functions!
+// Export
 module.exports = {
   getEnvironment,
   warmUp,
-  // extras
   greetUpper,
   reverseString,
   repeatString,
